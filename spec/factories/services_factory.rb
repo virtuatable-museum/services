@@ -7,6 +7,7 @@ FactoryGirl.define do
 
       after :create do |service, evaluator|
         service.routes << build(:route)
+        service.instances << build(:instance)
       end
     end
   end

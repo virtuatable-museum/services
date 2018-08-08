@@ -1,6 +1,7 @@
 require 'bundler'
 Bundler.require :test
 
+require "rspec/json_expectations"
 require 'arkaan/specs'
 
 service = Arkaan::Utils::MicroService.instance

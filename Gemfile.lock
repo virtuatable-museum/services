@@ -25,7 +25,7 @@ GEM
       i18n (~> 0.7)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
-    arkaan (0.10.14)
+    arkaan (0.10.15)
       activemodel (= 5.1.4)
       activesupport (= 5.1.4)
       bcrypt (= 3.1.11)
@@ -100,6 +100,7 @@ GEM
     rspec-expectations (3.6.0)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.6.0)
+    rspec-json_expectations (2.1.0)
     rspec-mocks (3.6.0)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.6.0)
@@ -139,7 +140,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  arkaan (= 0.10.14)
+  arkaan (= 0.10.15)
   bcrypt (= 3.1.11)
   database_cleaner (= 1.6.1)
   draper (= 3.0.1)
@@ -149,6 +150,7 @@ DEPENDENCIES
   rack-test (= 0.7.0)
   rake
   rspec (= 3.6.0)
+  rspec-json_expectations
   rubocop
   simplecov (= 0.15.1)
   sinatra (= 2.0.1)

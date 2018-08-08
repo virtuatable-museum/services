@@ -22,23 +22,37 @@ RSpec.describe Controllers::Services do
         expect(last_response.status).to be 200
       end
       it 'returns the correct body for the list of services' do
-        expect(JSON.parse(last_response.body)).to eq({
+        expect(last_response.body).to include_json({
           'count' => 1,
           'items' => [
-            {
-              'id' => service.id.to_s,
-              'key' => 'test_service',
-              'path' => '/test',
-              'routes' => [
-                {
-                  'id' => service.routes.first.id.to_s,
-                  'verb' => 'post',
-                  'path' => '/route'
-                }
-              ]
-            }
+            {'key' => 'test_service', 'path' => '/test'}
           ]
         })
+      end
+      describe 'associations' do
+        let!(:parsed) { JSON.parse(last_response.body)['items'].first }
+
+        describe 'routes' do
+          it 'has created the service with a route' do
+            expect(parsed['routes'].count).to be 1
+          end
+          it 'has created the route correctly' do
+            expect(parsed['routes'].first).to include_json({'verb' => 'post', 'path' => '/route'})
+          end
+        end
+        describe 'instances' do
+          it 'has created the service with an instance' do
+            expect(parsed['instances'].count).to be 1
+          end
+          it 'has created the instance correctly' do
+            expect(parsed['instances'].first).to include_json({
+              'url' => 'https://test.service.com/',
+              'type' => 'heroku',
+              'running' => true,
+              'active' => true
+            })
+          end
+        end
       end
     end
 
