@@ -7,3 +7,6 @@ errors:
     token:
       required: 'https://github.com/jdr-tools/wiki/wiki/Common-errors#gateway-token-not-given'
       unknown: 'https://github.com/jdr-tools/wiki/wiki/Common-errors#gateway-token-not-found'
+  service:
+    service_id:
+      unknown: ''

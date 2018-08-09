@@ -34,28 +34,66 @@ RSpec.describe Controllers::Services do
 
         describe 'routes' do
           it 'has created the service with a route' do
-            expect(parsed['routes'].count).to be 1
-          end
-          it 'has created the route correctly' do
-            expect(parsed['routes'].first).to include_json({'verb' => 'post', 'path' => '/route'})
+            expect(parsed['routes']).to be 1
           end
         end
         describe 'instances' do
           it 'has created the service with an instance' do
-            expect(parsed['instances'].count).to be 1
-          end
-          it 'has created the instance correctly' do
-            expect(parsed['instances'].first).to include_json({
-              'url' => 'https://test.service.com/',
-              'type' => 'heroku',
-              'running' => true,
-              'active' => true
-            })
+            expect(parsed['instances']).to be 1
           end
         end
       end
     end
 
     it_should_behave_like 'a route', 'get', '/'
+  end
+
+  describe 'GET /:id' do
+    before do
+      get "/#{service.id.to_s}", {app_key: 'test_key', token: 'test_token'}
+    end
+
+    describe 'Nominal case' do
+      it 'Returns a OK (200)' do
+        expect(last_response.status).to be 200
+      end
+      it 'Returns the correct body' do
+        expect(last_response.body).to include_json({
+          key: 'test_service',
+          path: '/test',
+          routes: [{
+            path: '/route',
+            verb: 'post'
+          }],
+          instances: [{
+            url: 'https://test.service.com/',
+            active: true,
+            running: true,
+            type: 'heroku'
+          }]
+        })
+      end
+    end
+
+    describe 'Not Found' do
+      describe 'Service not found' do
+        before do
+          get '/unknown', {app_key: 'test_key', token: 'test_token'}
+        end
+
+        it 'Returns a Not Found (404)' do
+          expect(last_response.status).to be 404
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({
+            status: 404,
+            field: 'service_id',
+            error: 'unknown'
+          })
+        end
+      end
+    end
+
+    it_should_behave_like 'a route', 'get', '/:id'
   end
 end
