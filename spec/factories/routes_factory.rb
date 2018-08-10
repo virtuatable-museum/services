@@ -3,6 +3,9 @@ FactoryGirl.define do
     factory :route do
       path '/route'
       verb 'post'
+      active true
+      premium true
+      authenticated false
     end
   end
 end

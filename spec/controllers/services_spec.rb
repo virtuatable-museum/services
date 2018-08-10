@@ -63,7 +63,10 @@ RSpec.describe Controllers::Services do
           path: '/test',
           routes: [{
             path: '/route',
-            verb: 'post'
+            verb: 'post',
+            active: true,
+            authenticated: false,
+            premium: true
           }],
           instances: [{
             url: 'https://test.service.com/',
