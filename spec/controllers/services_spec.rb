@@ -99,4 +99,95 @@ RSpec.describe Controllers::Services do
 
     it_should_behave_like 'a route', 'get', '/:id'
   end
+
+  describe 'PUT /:id' do
+
+    describe 'Update of the active flag' do
+      describe 'update to true with a boolean' do
+        let!(:non_premium) { create(:service, key: 'nonpremium', premium: false) }
+
+        before do
+          put "/#{non_premium.id.to_s}", {premium: true, app_key: 'test_key', token: 'test_token'}
+        end
+        it 'Returns a 200 (OK)' do
+          expect(last_response.status).to be 200
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({message: 'updated'})
+        end
+        it 'has correctly updated the service' do
+          expect(Arkaan::Monitoring::Service.where(key: 'nonpremium').first.premium).to be true
+        end
+      end
+      describe 'update to true with a string' do
+        let!(:non_premium) { create(:service, key: 'nonpremium', premium: false) }
+
+        before do
+          put "/#{non_premium.id.to_s}", {premium: 'true', app_key: 'test_key', token: 'test_token'}
+        end
+        it 'Returns a 200 (OK)' do
+          expect(last_response.status).to be 200
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({message: 'updated'})
+        end
+        it 'has correctly updated the service' do
+          expect(Arkaan::Monitoring::Service.where(key: 'nonpremium').first.premium).to be true
+        end
+      end
+      describe 'update to true with a string' do
+        let!(:non_premium) { create(:service, key: 'nonpremium', premium: false) }
+
+        before do
+          put "/#{non_premium.id.to_s}", {premium: 1, app_key: 'test_key', token: 'test_token'}
+        end
+        it 'Returns a 200 (OK)' do
+          expect(last_response.status).to be 200
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({message: 'updated'})
+        end
+        it 'has correctly updated the service' do
+          expect(Arkaan::Monitoring::Service.where(key: 'nonpremium').first.premium).to be true
+        end
+      end
+      describe 'update to false' do
+        let!(:premium) { create(:service, key: 'premium', premium: true) }
+
+        before do
+          put "/#{premium.id.to_s}", {premium: false, app_key: 'test_key', token: 'test_token'}
+        end
+        it 'Returns a 200 (OK)' do
+          expect(last_response.status).to be 200
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({message: 'updated'})
+        end
+        it 'has correctly updated the service' do
+          expect(Arkaan::Monitoring::Service.where(key: 'premium').first.premium).to be false
+        end
+      end
+    end
+
+    describe 'Not Found' do
+      describe 'Service not found' do
+        before do
+          get '/unknown', {app_key: 'test_key', token: 'test_token'}
+        end
+
+        it 'Returns a Not Found (404)' do
+          expect(last_response.status).to be 404
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({
+            status: 404,
+            field: 'service_id',
+            error: 'unknown'
+          })
+        end
+      end
+    end
+
+    it_should_behave_like 'a route', 'put', '/:id'
+  end
 end
