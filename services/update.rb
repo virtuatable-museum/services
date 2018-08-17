@@ -17,6 +17,7 @@ module Services
     # @param parameters [Hash] a hash with the data to update, accepted keys : 'active'
     # @return [Arkaan::Monitoring::Instance] the updated instance for further use.
     def update_instance(instance, parameters)
+
       update_from_params(instance, ['active'], parameters)
     end
 

@@ -260,6 +260,75 @@ RSpec.describe Controllers::Services do
 
   describe 'PUT /:id/instances/:id' do
 
+    describe 'Update of the active flag' do
+      let!(:bare_service) { create(:bare_service, key: 'instances') }
+
+      describe 'update to true with a boolean' do
+        let!(:inactive) { create(:instance, service: bare_service, active: false) }
+
+        before do
+          put "/#{bare_service.id.to_s}/instances/#{inactive.id.to_s}", {active: true, app_key: 'test_key', token: 'test_token'}
+        end
+        it 'Returns a 200 (OK)' do
+          expect(last_response.status).to be 200
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({message: 'updated'})
+        end
+        it 'has correctly updated the service' do
+          expect(Arkaan::Monitoring::Service.where(key: 'instances').first.instances.first.active).to be true
+        end
+      end
+      describe 'update to true with a string' do
+        let!(:inactive) { create(:instance, service: bare_service, active: false) }
+
+        before do
+          put "/#{bare_service.id.to_s}/instances/#{inactive.id.to_s}", {active: 'true', app_key: 'test_key', token: 'test_token'}
+        end
+        it 'Returns a 200 (OK)' do
+          expect(last_response.status).to be 200
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({message: 'updated'})
+        end
+        it 'has correctly updated the service' do
+          expect(Arkaan::Monitoring::Service.where(key: 'instances').first.instances.first.active).to be true
+        end
+      end
+      describe 'update to true with a string' do
+        let!(:inactive) { create(:instance, service: bare_service, active: false) }
+
+        before do
+          put "/#{bare_service.id.to_s}/instances/#{inactive.id.to_s}", {active: 1, app_key: 'test_key', token: 'test_token'}
+        end
+        it 'Returns a 200 (OK)' do
+          expect(last_response.status).to be 200
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({message: 'updated'})
+        end
+        it 'has correctly updated the service' do
+          expect(Arkaan::Monitoring::Service.where(key: 'instances').first.instances.first.active).to be true
+        end
+      end
+      describe 'update to false' do
+        let!(:active) { create(:instance, service: bare_service, active: true) }
+
+        before do
+          put "/#{bare_service.id.to_s}/instances/#{bare_service.instances.first.id.to_s}", {active: false, app_key: 'test_key', token: 'test_token'}
+        end
+        it 'Returns a 200 (OK)' do
+          expect(last_response.status).to be 200
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({message: 'updated'})
+        end
+        it 'has correctly updated the service' do
+          expect(Arkaan::Monitoring::Service.where(key: 'instances').first.instances.first.active).to be false
+        end
+      end
+    end
+
     describe 'Not Found' do
       describe 'Service not found' do
         before do
@@ -278,10 +347,10 @@ RSpec.describe Controllers::Services do
         end
       end
       describe 'Instance not found' do
-        let!(:service) { create(:service) }
+        let!(:another_service) { create(:bare_service, key: 'not_found') }
 
         before do
-          get "/#{service.id.to_s}/instances/instance_id", {app_key: 'test_key', token: 'test_token'}
+          get "/#{another_service.id.to_s}/instances/instance_id", {app_key: 'test_key', token: 'test_token'}
         end
 
         it 'Returns a Not Found (404)' do

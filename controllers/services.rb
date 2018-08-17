@@ -29,7 +29,8 @@ module Controllers
     end
 
     declare_route 'put', '/:id/instances/:instance_id' do
-
+      instance = ::Services::Update.instance.update_instance(@instance, params)
+      halt 200, {message: 'updated'}.to_json
     end
 
     def check_service
@@ -41,7 +42,7 @@ module Controllers
     def check_instance
       instance = @service.instances.where(id: params['instance_id']).first
       custom_error(404, "instance.instance_id.unknown") if instance.nil?
-      return @instance
+      return instance
     end
   end
 end
