@@ -24,12 +24,20 @@ module Controllers
     end
 
     declare_route 'put', '/:id' do
-      service = ::Services::Update.instance.update_service(@service, params)
+      ::Services::Update.instance.update_service(@service, params)
       halt 200, {message: 'updated'}.to_json
     end
 
     declare_route 'put', '/:id/instances/:instance_id' do
-      instance = ::Services::Update.instance.update_instance(@instance, params)
+      ::Services::Update.instance.update_instance(@instance, params)
+      halt 200, {message: 'updated'}.to_json
+    end
+
+    declare_route 'put', '/:id/routes/:route_id' do
+      service = check_service
+      route = service.routes.where(id: params['route_id']).first
+      custom_error(404, "route.route_id.unknown") if route.nil?
+      ::Services::Update.instance.update_route(route, params)
       halt 200, {message: 'updated'}.to_json
     end
 

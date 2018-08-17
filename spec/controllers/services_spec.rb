@@ -239,7 +239,7 @@ RSpec.describe Controllers::Services do
     describe 'Not Found' do
       describe 'Service not found' do
         before do
-          get '/unknown', {app_key: 'test_key', token: 'test_token'}
+          put '/unknown', {app_key: 'test_key', token: 'test_token'}
         end
 
         it 'Returns a Not Found (404)' do
@@ -258,7 +258,7 @@ RSpec.describe Controllers::Services do
     it_should_behave_like 'a route', 'put', '/:id'
   end
 
-  describe 'PUT /:id/instances/:id' do
+  describe 'PUT /:id/instances/:instance_id' do
 
     describe 'Update of the active flag' do
       let!(:bare_service) { create(:bare_service, key: 'instances') }
@@ -332,7 +332,7 @@ RSpec.describe Controllers::Services do
     describe 'Not Found' do
       describe 'Service not found' do
         before do
-          get '/unknown/instances/instance_id', {app_key: 'test_key', token: 'test_token'}
+          put '/unknown/instances/instance_id', {app_key: 'test_key', token: 'test_token'}
         end
 
         it 'Returns a Not Found (404)' do
@@ -350,7 +350,7 @@ RSpec.describe Controllers::Services do
         let!(:another_service) { create(:bare_service, key: 'not_found') }
 
         before do
-          get "/#{another_service.id.to_s}/instances/instance_id", {app_key: 'test_key', token: 'test_token'}
+          put "/#{another_service.id.to_s}/instances/instance_id", {app_key: 'test_key', token: 'test_token'}
         end
 
         it 'Returns a Not Found (404)' do
@@ -367,5 +367,252 @@ RSpec.describe Controllers::Services do
     end
 
     it_should_behave_like 'a route', 'put', '/service_id/instances/instance_id'
+  end
+
+  describe 'PUT /:id/routes/:route_id' do
+
+    describe 'Update of the active flag' do
+      let!(:bare_service) { create(:bare_service, key: 'routes') }
+
+      describe 'update to true with a boolean' do
+        let!(:inactive) { create(:route, service: bare_service, active: false) }
+
+        before do
+          put "/#{bare_service.id.to_s}/routes/#{inactive.id.to_s}", {active: true, app_key: 'test_key', token: 'test_token'}
+        end
+        it 'Returns a 200 (OK)' do
+          expect(last_response.status).to be 200
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({message: 'updated'})
+        end
+        it 'has correctly updated the service' do
+          expect(Arkaan::Monitoring::Service.where(key: 'routes').first.routes.first.active).to be true
+        end
+      end
+      describe 'update to true with a string' do
+        let!(:inactive) { create(:route, service: bare_service, active: false) }
+
+        before do
+          put "/#{bare_service.id.to_s}/routes/#{inactive.id.to_s}", {active: 'true', app_key: 'test_key', token: 'test_token'}
+        end
+        it 'Returns a 200 (OK)' do
+          expect(last_response.status).to be 200
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({message: 'updated'})
+        end
+        it 'has correctly updated the service' do
+          expect(Arkaan::Monitoring::Service.where(key: 'routes').first.routes.first.active).to be true
+        end
+      end
+      describe 'update to true with a string' do
+        let!(:inactive) { create(:route, service: bare_service, active: false) }
+
+        before do
+          put "/#{bare_service.id.to_s}/routes/#{inactive.id.to_s}", {active: 1, app_key: 'test_key', token: 'test_token'}
+        end
+        it 'Returns a 200 (OK)' do
+          expect(last_response.status).to be 200
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({message: 'updated'})
+        end
+        it 'has correctly updated the service' do
+          expect(Arkaan::Monitoring::Service.where(key: 'routes').first.routes.first.active).to be true
+        end
+      end
+      describe 'update to false' do
+        let!(:active) { create(:route, service: bare_service, active: true) }
+
+        before do
+          put "/#{bare_service.id.to_s}/routes/#{bare_service.routes.first.id.to_s}", {active: false, app_key: 'test_key', token: 'test_token'}
+        end
+        it 'Returns a 200 (OK)' do
+          expect(last_response.status).to be 200
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({message: 'updated'})
+        end
+        it 'has correctly updated the service' do
+          expect(Arkaan::Monitoring::Service.where(key: 'routes').first.routes.first.active).to be false
+        end
+      end
+    end
+
+    describe 'Update of the premium flag' do
+      let!(:bare_service) { create(:bare_service, key: 'routes') }
+
+      describe 'update to true with a boolean' do
+        let!(:non_premium) { create(:route, service: bare_service, premium: false) }
+
+        before do
+          put "/#{bare_service.id.to_s}/routes/#{non_premium.id.to_s}", {premium: true, app_key: 'test_key', token: 'test_token'}
+        end
+        it 'Returns a 200 (OK)' do
+          expect(last_response.status).to be 200
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({message: 'updated'})
+        end
+        it 'has correctly updated the service' do
+          expect(Arkaan::Monitoring::Service.where(key: 'routes').first.routes.first.premium).to be true
+        end
+      end
+      describe 'update to true with a string' do
+        let!(:non_premium) { create(:route, service: bare_service, premium: false) }
+
+        before do
+          put "/#{bare_service.id.to_s}/routes/#{non_premium.id.to_s}", {premium: 'true', app_key: 'test_key', token: 'test_token'}
+        end
+        it 'Returns a 200 (OK)' do
+          expect(last_response.status).to be 200
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({message: 'updated'})
+        end
+        it 'has correctly updated the service' do
+          expect(Arkaan::Monitoring::Service.where(key: 'routes').first.routes.first.premium).to be true
+        end
+      end
+      describe 'update to true with a string' do
+        let!(:non_premium) { create(:route, service: bare_service, premium: false) }
+
+        before do
+          put "/#{bare_service.id.to_s}/routes/#{non_premium.id.to_s}", {premium: 1, app_key: 'test_key', token: 'test_token'}
+        end
+        it 'Returns a 200 (OK)' do
+          expect(last_response.status).to be 200
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({message: 'updated'})
+        end
+        it 'has correctly updated the service' do
+          expect(Arkaan::Monitoring::Service.where(key: 'routes').first.routes.first.premium).to be true
+        end
+      end
+      describe 'update to false' do
+        let!(:premium) { create(:route, service: bare_service, premium: true) }
+
+        before do
+          put "/#{bare_service.id.to_s}/routes/#{premium.id.to_s}", {premium: false, app_key: 'test_key', token: 'test_token'}
+        end
+        it 'Returns a 200 (OK)' do
+          expect(last_response.status).to be 200
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({message: 'updated'})
+        end
+        it 'has correctly updated the service' do
+          expect(Arkaan::Monitoring::Service.where(key: 'routes').first.routes.first.premium).to be false
+        end
+      end
+    end
+
+    describe 'Update of the authenticated flag' do
+      let!(:bare_service) { create(:bare_service, key: 'routes') }
+
+      describe 'update to true with a boolean' do
+        let!(:non_authenticated) { create(:route, service: bare_service, authenticated: false) }
+
+        before do
+          put "/#{bare_service.id.to_s}/routes/#{non_authenticated.id.to_s}", {authenticated: true, app_key: 'test_key', token: 'test_token'}
+        end
+        it 'Returns a 200 (OK)' do
+          expect(last_response.status).to be 200
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({message: 'updated'})
+        end
+        it 'has correctly updated the service' do
+          expect(Arkaan::Monitoring::Service.where(key: 'routes').first.routes.first.authenticated).to be true
+        end
+      end
+      describe 'update to true with a string' do
+        let!(:non_authenticated) { create(:route, service: bare_service, authenticated: false) }
+
+        before do
+          put "/#{bare_service.id.to_s}/routes/#{non_authenticated.id.to_s}", {authenticated: 'true', app_key: 'test_key', token: 'test_token'}
+        end
+        it 'Returns a 200 (OK)' do
+          expect(last_response.status).to be 200
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({message: 'updated'})
+        end
+        it 'has correctly updated the service' do
+          expect(Arkaan::Monitoring::Service.where(key: 'routes').first.routes.first.authenticated).to be true
+        end
+      end
+      describe 'update to true with a string' do
+        let!(:non_authenticated) { create(:route, service: bare_service, authenticated: false) }
+
+        before do
+          put "/#{bare_service.id.to_s}/routes/#{non_authenticated.id.to_s}", {authenticated: 1, app_key: 'test_key', token: 'test_token'}
+        end
+        it 'Returns a 200 (OK)' do
+          expect(last_response.status).to be 200
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({message: 'updated'})
+        end
+        it 'has correctly updated the service' do
+          expect(Arkaan::Monitoring::Service.where(key: 'routes').first.routes.first.authenticated).to be true
+        end
+      end
+      describe 'update to false' do
+        let!(:authenticated) { create(:route, service: bare_service, authenticated: true) }
+
+        before do
+          put "/#{bare_service.id.to_s}/routes/#{authenticated.id.to_s}", {authenticated: false, app_key: 'test_key', token: 'test_token'}
+        end
+        it 'Returns a 200 (OK)' do
+          expect(last_response.status).to be 200
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({message: 'updated'})
+        end
+        it 'has correctly updated the service' do
+          expect(Arkaan::Monitoring::Service.where(key: 'routes').first.routes.first.authenticated).to be false
+        end
+      end
+    end
+
+    describe 'Not Found' do
+      describe 'Service not found' do
+        before do
+          put '/unknown/routes/instance_id', {app_key: 'test_key', token: 'test_token'}
+        end
+
+        it 'Returns a Not Found (404)' do
+          expect(last_response.status).to be 404
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({
+            status: 404,
+            field: 'service_id',
+            error: 'unknown'
+          })
+        end
+      end
+      describe 'Route not found' do
+        let!(:another_service) { create(:bare_service, key: 'not_found') }
+
+        before do
+          put "/#{another_service.id.to_s}/routes/route_id", {app_key: 'test_key', token: 'test_token'}
+        end
+
+        it 'Returns a Not Found (404)' do
+          expect(last_response.status).to be 404
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({
+            status: 404,
+            field: 'route_id',
+            error: 'unknown'
+          })
+        end
+      end
+    end
   end
 end

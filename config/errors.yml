@@ -13,3 +13,6 @@ errors:
   instance:
     instance_id:
       unknown: ''
+  route:
+    route_id:
+      unknown: ''
