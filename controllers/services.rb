@@ -6,8 +6,12 @@ module Controllers
     load_errors_from __FILE__
 
     before '/:id' do
-      @service = Arkaan::Monitoring::Service.where(id: params['id']).first
-      custom_error(404, "service.service_id.unknown") if @service.nil?
+      @service = check_service
+    end
+
+    before '/:id/instances/:instance_id' do
+      @service = check_service
+      @instance = check_instance
     end
     
     declare_route 'get', '/' do
@@ -22,6 +26,22 @@ module Controllers
     declare_route 'put', '/:id' do
       service = ::Services::Update.instance.update_service(@service, params)
       halt 200, {message: 'updated'}.to_json
+    end
+
+    declare_route 'put', '/:id/instances/:instance_id' do
+
+    end
+
+    def check_service
+      service = Arkaan::Monitoring::Service.where(id: params['id']).first
+      custom_error(404, "service.service_id.unknown") if service.nil?
+      return service
+    end
+
+    def check_instance
+      instance = @service.instances.where(id: params['instance_id']).first
+      custom_error(404, "instance.instance_id.unknown") if instance.nil?
+      return @instance
     end
   end
 end

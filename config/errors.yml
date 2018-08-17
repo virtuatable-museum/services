@@ -10,3 +10,6 @@ errors:
   service:
     service_id:
       unknown: ''
+  instance:
+    instance_id:
+      unknown: ''
