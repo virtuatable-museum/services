@@ -5,12 +5,15 @@ module Controllers
 
     load_errors_from __FILE__
 
-    before '/:id' do
+    before do
+      @session = check_session('service')
+    end
+
+    before '/:id/?*' do
       @service = check_service
     end
 
-    before '/:id/instances/:instance_id' do
-      @service = check_service
+    before '/:id/instances/:instance_id/?*' do
       @instance = check_instance
     end
     
@@ -34,11 +37,19 @@ module Controllers
     end
 
     declare_route 'put', '/:id/routes/:route_id' do
-      service = check_service
-      route = service.routes.where(id: params['route_id']).first
+      route = @service.routes.where(id: params['route_id']).first
       custom_error(404, "route.route_id.unknown") if route.nil?
       ::Services::Update.instance.update_route(route, params)
       halt 200, {message: 'updated'}.to_json
+    end
+
+    declare_route 'post', '/:id/instances/:instance_id/actions' do
+      action = ::Services::Actions.instance.perform(params['type'], @instance, @session)
+      if action
+        halt 201, {message: 'created', item: Decorators::Action.new(action).to_h}.to_json
+      else
+        model_error(action, 'action_creation')
+      end
     end
 
     def check_service

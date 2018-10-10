@@ -10,6 +10,9 @@ errors:
   service:
     service_id:
       unknown: ''
+    session_id:
+      required: ''
+      unknown: ''
   instance:
     instance_id:
       unknown: ''
