@@ -35,12 +35,12 @@ RSpec.describe Controllers::Services do
 
         describe 'routes' do
           it 'has created the service with a route' do
-            expect(parsed['routes']).to be 1
+            expect(parsed['routes'].count).to be 1
           end
         end
         describe 'instances' do
           it 'has created the service with an instance' do
-            expect(parsed['instances']).to be 1
+            expect(parsed['instances'].count).to be 1
           end
         end
       end

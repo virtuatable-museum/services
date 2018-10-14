@@ -19,7 +19,7 @@ module Controllers
     
     declare_route 'get', '/' do
       services = Decorators::Service.decorate_collection(Arkaan::Monitoring::Service.all)
-      halt 200, {count: Arkaan::Monitoring::Service.count, items: services.map(&:to_simple_h)}.to_json
+      halt 200, {count: Arkaan::Monitoring::Service.count, items: services.map(&:to_h)}.to_json
     end
 
     declare_route 'get', '/:id' do
