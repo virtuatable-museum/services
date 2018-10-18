@@ -19,9 +19,9 @@ module Services
 
     # Public method used to send an action to the service. It checks that the action exists and performs it.
     # @param action [Symbol] the action to perform on the given instance.
-    # @param instance [Arkaan::Monitoring::Instance] the instance on which perform the action.
+    # @param managedInstance [Arkaan::Monitoring::Instance] the instance on which perform the action.
     # @param session [Arkaan::Authentication::Session] the session of the user performing the action.
-    def perform(action, instance, session)
+    def perform(action, managedInstance, session)
       if respond_to?(action)
         return perform_and_save(action, instance, session)
       else
@@ -29,17 +29,17 @@ module Services
       end
     end
 
-    def perform_and_save(action, instance, session)
-      action_done = send(action, instance)
+    def perform_and_save(action, managedInstance, session)
+      action_done = send(action, managedInstance)
       logger.info("action effectuée !!!")
       logger.info("#{action_done} - #{respond_to? action}")
-      Arkaan::Monitoring::Action.new(type: action, instance: instance, user: session.account, success: action_done != false)
+      Arkaan::Monitoring::Action.new(type: action, instance: managedInstance, user: session.account, success: action_done != false)
     end
 
     # Restarts a given instance depending on its type. For example a heroku instance will be restarted by restarting all dynos.
-    # @param instance [Arkaan::Monitoring::Instance] the instance to restart.
-    def restart(instance)
-      case instance.type
+    # @param managedInstance [Arkaan::Monitoring::Instance] the instance to restart.
+    def restart(managedInstance)
+      case managedInstance.type
       when :heroku
         if heroku.nil?
           logger.info("Heroku n'a pas été correctement initialisé")
@@ -50,7 +50,7 @@ module Services
           return false
         end
         logger.info("une toute autre raison !")
-        action = heroku.dyno.restart(instance.data.name, 'web')
+        action = heroku.dyno.restart(managedInstance.data[:name], 'web')
         logger.info(action)
         return action
       end
