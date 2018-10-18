@@ -45,7 +45,7 @@ module Controllers
 
     declare_route 'post', '/:id/instances/:instance_id/actions' do
       action = ::Services::Actions.instance.perform(params['type'], @instance, @session)
-      if action
+      if action.save
         halt 201, {message: 'created', item: Decorators::Action.new(action).to_h}.to_json
       else
         model_error(action, 'action_creation')

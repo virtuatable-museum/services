@@ -28,13 +28,7 @@ module Services
 
     def perform_and_save(action, instance, session)
       action_done = send(action, instance)
-      if action_done
-        action = Arkaan::Monitoring::Action.new(type: action, instance: instance, user: session.account)
-        action.save
-        return action
-      else
-        return false
-      end
+      Arkaan::Monitoring::Action.new(type: action, instance: instance, user: session.account, success: action_done != false)
     end
 
     # Restarts a given instance depending on its type. For example a heroku instance will be restarted by restarting all dynos.
