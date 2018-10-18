@@ -11,10 +11,12 @@ module Services
     attr_accessor :logger
 
     def initialize
-      if !ENV['OAUTH_TOKEN'].nil?
-        heroku = PlatformAPI.connect_oauth(ENV['OAUTH_TOKEN'])
-      end
       @logger = Logger.new(STDOUT)
+      if !ENV['OAUTH_TOKEN'].nil?
+        @logger.info("l'environnement : #{ENV['OAUTH_TOKEN']}")
+        heroku = PlatformAPI.connect_oauth(ENV['OAUTH_TOKEN'])
+        @logger.info(heroku)
+      end
     end
 
     # Public method used to send an action to the service. It checks that the action exists and performs it.
