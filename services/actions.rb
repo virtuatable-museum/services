@@ -13,9 +13,7 @@ module Services
     def initialize
       @logger = Logger.new(STDOUT)
       if !ENV['OAUTH_TOKEN'].nil?
-        @logger.info("l'environnement : #{ENV['OAUTH_TOKEN']}")
-        heroku = PlatformAPI.connect_oauth(ENV['OAUTH_TOKEN'])
-        @logger.info(heroku)
+        @heroku = PlatformAPI.connect(ENV['OAUTH_TOKEN'])
       end
     end
 
