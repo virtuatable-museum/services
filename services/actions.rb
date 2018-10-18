@@ -23,7 +23,7 @@ module Services
     # @param session [Arkaan::Authentication::Session] the session of the user performing the action.
     def perform(action, managedInstance, session)
       if respond_to?(action)
-        return perform_and_save(action, instance, session)
+        return perform_and_save(action, managedInstance, session)
       else
         return false
       end
@@ -45,7 +45,7 @@ module Services
           logger.info("Heroku n'a pas été correctement initialisé")
           return false
         end
-        if Arkaan::Utils::MicroService.instance.instance.id.to_s == instance.id.to_s
+        if Arkaan::Utils::MicroService.instance.instance.id.to_s == managedInstance.id.to_s
           logger.info("L'instance actuelle est celle qui tente de se redémarrer")
           return false
         end
