@@ -17,22 +17,38 @@ module Services
       end
     end
 
-    # Public method used to send an action to the service. It checks that the action exists and performs it.
-    # @param action [Symbol] the action to perform on the given instance.
-    # @param managedInstance [Arkaan::Monitoring::Instance] the instance on which perform the action.
-    # @param session [Arkaan::Authentication::Session] the session of the user performing the action.
-    def perform(action, managedInstance, session)
-      if respond_to?(action)
-        return perform_and_save(action, managedInstance, session)
-      else
-        return false
+    def check_instances(instances)
+      instances.each do |service_id, instance_ids|
+        service = Arkaan::Monitoring::Service.where(_id: service_id).first
+        return false if service.nil?
+        instance_ids.each do |instance_id|
+          return false if service.instances.where(_id: instance_id).first.nil?
+        end
       end
+      return true
+    end
+
+    def check_action(action)
+      return respond_to?(action.to_sym)
+    end
+
+    def multi(action, instances, session)
+      results = []
+      instances.each do |service_id, instance_ids|
+        tmp_service = Arkaan::Monitoring::Service.where(id: service_id).first
+        instance_ids.each do |instance_id|
+          instance = tmp_service.instances.where(id: instance_id).first
+          created_action = perform_and_save(action, instance, session)
+          if created_action != false && created_action.save
+            results << Decorators::Action.new(created_action).to_h
+          end
+        end
+      end
+      return results
     end
 
     def perform_and_save(action, managedInstance, session)
       action_done = send(action, managedInstance)
-      logger.info("action effectuée !!!")
-      logger.info("#{action_done} - #{respond_to? action}")
       Arkaan::Monitoring::Action.new(type: action, instance: managedInstance, user: session.account, success: action_done != false)
     end
 
@@ -42,16 +58,12 @@ module Services
       case managedInstance.type
       when :heroku
         if heroku.nil?
-          logger.info("Heroku n'a pas été correctement initialisé")
           return false
         end
         if Arkaan::Utils::MicroService.instance.instance.id.to_s == managedInstance.id.to_s
-          logger.info("L'instance actuelle est celle qui tente de se redémarrer")
           return false
         end
-        logger.info("une toute autre raison !")
         action = heroku.dyno.restart(managedInstance.data[:name], 'web')
-        logger.info(action)
         return action
       end
     end

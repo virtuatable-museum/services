@@ -10,11 +10,26 @@ module Controllers
     end
 
     before '/:id/?*' do
-      @service = check_service
+      @service = check_service if params['id'] != 'actions'
     end
 
     before '/:id/instances/:instance_id/?*' do
       @instance = check_instance
+    end
+
+    declare_route 'post', '/actions' do
+      check_presence 'action', 'instances', route: 'actions'
+      if !params['instances'].is_a? Hash
+        custom_error 400, 'actions.instances.format'
+      end
+      if !::Services::Actions.instance.check_instances(params['instances'])
+        custom_error 404, 'actions.instances.unknown'
+      end
+      if !::Services::Actions::instance.check_action(params['action'])
+        custom_error 400, 'actions.action.unknown'
+      end
+      results = ::Services::Actions.instance.multi(params['action'], params['instances'], @session)
+      halt 201, {message: 'created', items: results}.to_json
     end
     
     declare_route 'get', '/' do
@@ -41,15 +56,6 @@ module Controllers
       custom_error(404, "route.route_id.unknown") if route.nil?
       ::Services::Update.instance.update_route(route, params)
       halt 200, {message: 'updated'}.to_json
-    end
-
-    declare_route 'post', '/:id/instances/:instance_id/actions' do
-      action = ::Services::Actions.instance.perform(params['type'], @instance, @session)
-      if action.save
-        halt 201, {message: 'created', item: Decorators::Action.new(action).to_h}.to_json
-      else
-        model_error(action, 'action_creation')
-      end
     end
 
     def check_service

@@ -619,83 +619,159 @@ RSpec.describe Controllers::Services do
     it_should_behave_like 'a route', 'put', '/service_id/route/route_id'
   end
 
-  describe 'POST /:id/instances/:instance_id/actions' do
+  describe 'POST /actions' do
+    let!(:service) { create(:bare_service) }
+    let!(:first_instance) { create(:instance, service: service) }
+    let!(:second_instance) { create(:instance, service: service, url: 'https://second.test.com/') }
+    let!(:instances) {  instances = {service.id.to_s => [first_instance.id.to_s, second_instance.id.to_s]} }
 
-    describe 'Creation of an action' do
-      let!(:instance) { create(:instance, service: service) }
-
+    describe 'Nominal case' do
       before do
-        expect(::Services::Actions.instance).to receive(:restart).and_return(true)
-        post "/#{service.id.to_s}/instances/#{instance.id.to_s}/actions", {app_key: 'test_key', token: 'test_token', session_id: session.token, type: 'restart'}
+        post '/actions', {app_key: 'test_key', token: 'test_token', session_id: session.token, instances: instances, action: 'restart'}
       end
-      it 'Returns a 201 (created) status' do
+      it 'Returns a OK (200) status code' do
         expect(last_response.status).to be 201
       end
       it 'Returns the correct body' do
         expect(last_response.body).to include_json({
-          message: 'created',
-          item: {
-            type: 'restart',
-            username: 'Autre compte'
-          }
+          items: [
+            {
+              type: 'restart',
+              username: 'Autre compte',
+              instance_id: first_instance.id.to_s,
+              service_id: service.id.to_s,
+            },
+            {
+              type: 'restart',
+              username: 'Autre compte',
+              instance_id: second_instance.id.to_s,
+              service_id: service.id.to_s,
+            }
+          ]
         })
       end
-      
-      describe 'created action' do
-        let!(:action) {
-          instance.reload
-          instance.actions.first
-        }
-
-        it 'has created an action' do
-          expect(instance.actions.count).to be 1
+      describe 'created actions' do
+        before do
+          first_instance.reload
+          second_instance.reload
         end
-        it 'has the correct account' do
-          expect(action.user.username).to eq 'Autre compte'
+        it 'has created an action on the first instance' do
+          expect(first_instance.actions.count).to be 1
         end
-        it 'has the correct type' do
-          expect(action.type).to be :restart
+        it 'has created an action on the second instance' do
+          expect(second_instance.actions.count).to be 1
+        end
+        describe 'first action' do
+          it 'has created the correct action' do
+            expect(first_instance.actions.first.type).to be :restart
+          end
+        end
+        describe 'second action' do
+          it 'has created the correct action' do
+            expect(second_instance.actions.first.type).to be :restart
+          end
         end
       end
     end
 
-    describe 'Not Found' do
-      describe 'Service not found' do
-        before do
-          put '/unknown/instances/instance_id', {app_key: 'test_key', token: 'test_token', session_id: session.token}
-        end
+    it_should_behave_like 'a route', 'post', '/actions'
 
-        it 'Returns a Not Found (404)' do
-          expect(last_response.status).to be 404
+    describe '400 errors' do
+      describe 'action not given' do
+        before do
+          post '/actions', {app_key: 'test_key', token: 'test_token', session_id: session.token, instances: {}}
+        end
+        it 'Returns a Bad Request (400) status' do
+          expect(last_response.status).to be 400
         end
         it 'Returns the correct body' do
           expect(last_response.body).to include_json({
-            status: 404,
-            field: 'service_id',
+            status: 400,
+            field: 'action',
+            error: 'required'
+          })
+        end
+      end
+      describe 'action empty' do
+        before do
+          post '/actions', {app_key: 'test_key', token: 'test_token', session_id: session.token, instances: instances, action: ''}
+        end
+        it 'Returns a Bad Request (400) status' do
+          expect(last_response.status).to be 400
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({
+            status: 400,
+            field: 'action',
+            error: 'required'
+          })
+        end
+      end
+      describe 'action unknown' do
+        before do
+          post '/actions', {app_key: 'test_key', token: 'test_token', session_id: session.token, instances: instances, action: 'anything'}
+        end
+        it 'Returns a Bad Request (400) status' do
+          expect(last_response.status).to be 400
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({
+            status: 400,
+            field: 'action',
             error: 'unknown'
           })
         end
       end
-      describe 'Instance not found' do
-        let!(:another_service) { create(:bare_service, key: 'not_found') }
-
+      describe 'invalid instances' do
         before do
-          put "/#{another_service.id.to_s}/instances/instance_id", {app_key: 'test_key', token: 'test_token', session_id: session.token}
+          post '/actions', {app_key: 'test_key', token: 'test_token', session_id: session.token, instances: 'any string', action: 'restart'}
         end
-
-        it 'Returns a Not Found (404)' do
-          expect(last_response.status).to be 404
+        it 'Returns a Bad Request (400) status' do
+          expect(last_response.status).to be 400
         end
         it 'Returns the correct body' do
           expect(last_response.body).to include_json({
-            status: 404,
-            field: 'instance_id',
-            error: 'unknown'
+            status: 400,
+            field: 'instances',
+            error: 'format'
           })
         end
       end
     end
 
-    it_should_behave_like 'a route', 'post', '/service_id/instances/instance_id/actions'
+    describe '404 errors' do
+      describe 'when a service ID does not exist' do
+        before do
+          instances = {'anything' => [first_instance.id.to_s, second_instance.id.to_s]}
+          post '/actions', {app_key: 'test_key', token: 'test_token', session_id: session.token, instances: instances, action: 'restart'}
+        end
+        it 'Returns a Not Found (404) status code' do
+          expect(last_response.status).to be 404
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({
+            field: 'instances',
+            error: 'unknown',
+            status: 404
+          })
+        end
+      end
+      describe 'when an instance ID does not exist' do
+        before do
+          instances = {service.id.to_s => ['anything', second_instance.id.to_s]}
+          post '/actions', {app_key: 'test_key', token: 'test_token', session_id: session.token, instances: instances, action: 'restart'}
+        end
+        it 'Returns a Not Found (404) status code' do
+          expect(last_response.status).to be 404
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({
+            field: 'instances',
+            error: 'unknown',
+            status: 404
+          })
+        end
+      end
+    end
   end
 end
