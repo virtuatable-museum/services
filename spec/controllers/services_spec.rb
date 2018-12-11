@@ -17,7 +17,7 @@ RSpec.describe Controllers::Services do
   describe 'GET /' do
     describe 'nominal case' do
       before do
-        get '/', {app_key: 'test_key', token: 'test_token', session_id: session.token}
+        get '/services', {app_key: 'test_key', token: 'test_token', session_id: session.token}
       end
       it 'Returns a OK (200) status code when querying for the list of services' do
         expect(last_response.status).to be 200
@@ -46,12 +46,12 @@ RSpec.describe Controllers::Services do
       end
     end
 
-    it_should_behave_like 'a route', 'get', '/'
+    it_should_behave_like 'a route', 'get', '/services'
   end
 
   describe 'GET /:id' do
     before do
-      get "/#{service.id.to_s}", {app_key: 'test_key', token: 'test_token', session_id: session.token}
+      get "/services/#{service.id.to_s}", {app_key: 'test_key', token: 'test_token', session_id: session.token}
     end
 
     describe 'Nominal case' do
@@ -82,7 +82,7 @@ RSpec.describe Controllers::Services do
     describe 'Not Found' do
       describe 'Service not found' do
         before do
-          get '/unknown', {app_key: 'test_key', token: 'test_token', session_id: session.token}
+          get '/services/unknown', {app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
 
         it 'Returns a Not Found (404)' do
@@ -98,7 +98,7 @@ RSpec.describe Controllers::Services do
       end
     end
 
-    it_should_behave_like 'a route', 'get', '/service_id'
+    it_should_behave_like 'a route', 'get', '/services/service_id'
   end
 
   describe 'PUT /:id' do
@@ -108,7 +108,7 @@ RSpec.describe Controllers::Services do
         let!(:inactive) { create(:service, key: 'inactive', active: false) }
 
         before do
-          put "/#{inactive.id.to_s}", {active: true, app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put "/services/#{inactive.id.to_s}", {active: true, app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
         it 'Returns a 200 (OK)' do
           expect(last_response.status).to be 200
@@ -124,7 +124,7 @@ RSpec.describe Controllers::Services do
         let!(:inactive) { create(:service, key: 'inactive', active: false) }
 
         before do
-          put "/#{inactive.id.to_s}", {active: 'true', app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put "/services/#{inactive.id.to_s}", {active: 'true', app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
         it 'Returns a 200 (OK)' do
           expect(last_response.status).to be 200
@@ -140,7 +140,7 @@ RSpec.describe Controllers::Services do
         let!(:inactive) { create(:service, key: 'inactive', active: false) }
 
         before do
-          put "/#{inactive.id.to_s}", {active: 1, app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put "/services/#{inactive.id.to_s}", {active: 1, app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
         it 'Returns a 200 (OK)' do
           expect(last_response.status).to be 200
@@ -156,7 +156,7 @@ RSpec.describe Controllers::Services do
         let!(:active) { create(:service, key: 'active', active: true) }
 
         before do
-          put "/#{active.id.to_s}", {active: false, app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put "/services/#{active.id.to_s}", {active: false, app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
         it 'Returns a 200 (OK)' do
           expect(last_response.status).to be 200
@@ -175,7 +175,7 @@ RSpec.describe Controllers::Services do
         let!(:non_premium) { create(:service, key: 'nonpremium', premium: false) }
 
         before do
-          put "/#{non_premium.id.to_s}", {premium: true, app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put "/services/#{non_premium.id.to_s}", {premium: true, app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
         it 'Returns a 200 (OK)' do
           expect(last_response.status).to be 200
@@ -191,7 +191,7 @@ RSpec.describe Controllers::Services do
         let!(:non_premium) { create(:service, key: 'nonpremium', premium: false) }
 
         before do
-          put "/#{non_premium.id.to_s}", {premium: 'true', app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put "/services/#{non_premium.id.to_s}", {premium: 'true', app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
         it 'Returns a 200 (OK)' do
           expect(last_response.status).to be 200
@@ -207,7 +207,7 @@ RSpec.describe Controllers::Services do
         let!(:non_premium) { create(:service, key: 'nonpremium', premium: false) }
 
         before do
-          put "/#{non_premium.id.to_s}", {premium: 1, app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put "/services/#{non_premium.id.to_s}", {premium: 1, app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
         it 'Returns a 200 (OK)' do
           expect(last_response.status).to be 200
@@ -223,7 +223,7 @@ RSpec.describe Controllers::Services do
         let!(:premium) { create(:service, key: 'premium', premium: true) }
 
         before do
-          put "/#{premium.id.to_s}", {premium: false, app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put "/services/#{premium.id.to_s}", {premium: false, app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
         it 'Returns a 200 (OK)' do
           expect(last_response.status).to be 200
@@ -240,7 +240,7 @@ RSpec.describe Controllers::Services do
     describe 'Not Found' do
       describe 'Service not found' do
         before do
-          put '/unknown', {app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put '/services/unknown', {app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
 
         it 'Returns a Not Found (404)' do
@@ -268,7 +268,7 @@ RSpec.describe Controllers::Services do
         let!(:inactive) { create(:instance, service: bare_service, active: false) }
 
         before do
-          put "/#{bare_service.id.to_s}/instances/#{inactive.id.to_s}", {active: true, app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put "/services/#{bare_service.id.to_s}/instances/#{inactive.id.to_s}", {active: true, app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
         it 'Returns a 200 (OK)' do
           expect(last_response.status).to be 200
@@ -284,7 +284,7 @@ RSpec.describe Controllers::Services do
         let!(:inactive) { create(:instance, service: bare_service, active: false) }
 
         before do
-          put "/#{bare_service.id.to_s}/instances/#{inactive.id.to_s}", {active: 'true', app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put "/services/#{bare_service.id.to_s}/instances/#{inactive.id.to_s}", {active: 'true', app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
         it 'Returns a 200 (OK)' do
           expect(last_response.status).to be 200
@@ -300,7 +300,7 @@ RSpec.describe Controllers::Services do
         let!(:inactive) { create(:instance, service: bare_service, active: false) }
 
         before do
-          put "/#{bare_service.id.to_s}/instances/#{inactive.id.to_s}", {active: 1, app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put "/services/#{bare_service.id.to_s}/instances/#{inactive.id.to_s}", {active: 1, app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
         it 'Returns a 200 (OK)' do
           expect(last_response.status).to be 200
@@ -316,7 +316,7 @@ RSpec.describe Controllers::Services do
         let!(:active) { create(:instance, service: bare_service, active: true) }
 
         before do
-          put "/#{bare_service.id.to_s}/instances/#{bare_service.instances.first.id.to_s}", {active: false, app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put "/services/#{bare_service.id.to_s}/instances/#{bare_service.instances.first.id.to_s}", {active: false, app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
         it 'Returns a 200 (OK)' do
           expect(last_response.status).to be 200
@@ -333,7 +333,7 @@ RSpec.describe Controllers::Services do
     describe 'Not Found' do
       describe 'Service not found' do
         before do
-          put '/unknown/instances/instance_id', {app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put '/services/unknown/instances/instance_id', {app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
 
         it 'Returns a Not Found (404)' do
@@ -351,7 +351,7 @@ RSpec.describe Controllers::Services do
         let!(:another_service) { create(:bare_service, key: 'not_found') }
 
         before do
-          put "/#{another_service.id.to_s}/instances/instance_id", {app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put "/services/#{another_service.id.to_s}/instances/instance_id", {app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
 
         it 'Returns a Not Found (404)' do
@@ -379,7 +379,7 @@ RSpec.describe Controllers::Services do
         let!(:inactive) { create(:route, service: bare_service, active: false) }
 
         before do
-          put "/#{bare_service.id.to_s}/routes/#{inactive.id.to_s}", {active: true, app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put "/services/#{bare_service.id.to_s}/routes/#{inactive.id.to_s}", {active: true, app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
         it 'Returns a 200 (OK)' do
           expect(last_response.status).to be 200
@@ -395,7 +395,7 @@ RSpec.describe Controllers::Services do
         let!(:inactive) { create(:route, service: bare_service, active: false) }
 
         before do
-          put "/#{bare_service.id.to_s}/routes/#{inactive.id.to_s}", {active: 'true', app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put "/services/#{bare_service.id.to_s}/routes/#{inactive.id.to_s}", {active: 'true', app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
         it 'Returns a 200 (OK)' do
           expect(last_response.status).to be 200
@@ -411,7 +411,7 @@ RSpec.describe Controllers::Services do
         let!(:inactive) { create(:route, service: bare_service, active: false) }
 
         before do
-          put "/#{bare_service.id.to_s}/routes/#{inactive.id.to_s}", {active: 1, app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put "/services/#{bare_service.id.to_s}/routes/#{inactive.id.to_s}", {active: 1, app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
         it 'Returns a 200 (OK)' do
           expect(last_response.status).to be 200
@@ -427,7 +427,7 @@ RSpec.describe Controllers::Services do
         let!(:active) { create(:route, service: bare_service, active: true) }
 
         before do
-          put "/#{bare_service.id.to_s}/routes/#{bare_service.routes.first.id.to_s}", {active: false, app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put "/services/#{bare_service.id.to_s}/routes/#{bare_service.routes.first.id.to_s}", {active: false, app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
         it 'Returns a 200 (OK)' do
           expect(last_response.status).to be 200
@@ -448,7 +448,7 @@ RSpec.describe Controllers::Services do
         let!(:non_premium) { create(:route, service: bare_service, premium: false) }
 
         before do
-          put "/#{bare_service.id.to_s}/routes/#{non_premium.id.to_s}", {premium: true, app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put "/services/#{bare_service.id.to_s}/routes/#{non_premium.id.to_s}", {premium: true, app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
         it 'Returns a 200 (OK)' do
           expect(last_response.status).to be 200
@@ -464,7 +464,7 @@ RSpec.describe Controllers::Services do
         let!(:non_premium) { create(:route, service: bare_service, premium: false) }
 
         before do
-          put "/#{bare_service.id.to_s}/routes/#{non_premium.id.to_s}", {premium: 'true', app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put "/services/#{bare_service.id.to_s}/routes/#{non_premium.id.to_s}", {premium: 'true', app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
         it 'Returns a 200 (OK)' do
           expect(last_response.status).to be 200
@@ -480,7 +480,7 @@ RSpec.describe Controllers::Services do
         let!(:non_premium) { create(:route, service: bare_service, premium: false) }
 
         before do
-          put "/#{bare_service.id.to_s}/routes/#{non_premium.id.to_s}", {premium: 1, app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put "/services/#{bare_service.id.to_s}/routes/#{non_premium.id.to_s}", {premium: 1, app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
         it 'Returns a 200 (OK)' do
           expect(last_response.status).to be 200
@@ -496,7 +496,7 @@ RSpec.describe Controllers::Services do
         let!(:premium) { create(:route, service: bare_service, premium: true) }
 
         before do
-          put "/#{bare_service.id.to_s}/routes/#{premium.id.to_s}", {premium: false, app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put "/services/#{bare_service.id.to_s}/routes/#{premium.id.to_s}", {premium: false, app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
         it 'Returns a 200 (OK)' do
           expect(last_response.status).to be 200
@@ -517,7 +517,7 @@ RSpec.describe Controllers::Services do
         let!(:non_authenticated) { create(:route, service: bare_service, authenticated: false) }
 
         before do
-          put "/#{bare_service.id.to_s}/routes/#{non_authenticated.id.to_s}", {authenticated: true, app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put "/services/#{bare_service.id.to_s}/routes/#{non_authenticated.id.to_s}", {authenticated: true, app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
         it 'Returns a 200 (OK)' do
           expect(last_response.status).to be 200
@@ -533,7 +533,7 @@ RSpec.describe Controllers::Services do
         let!(:non_authenticated) { create(:route, service: bare_service, authenticated: false) }
 
         before do
-          put "/#{bare_service.id.to_s}/routes/#{non_authenticated.id.to_s}", {authenticated: 'true', app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put "/services/#{bare_service.id.to_s}/routes/#{non_authenticated.id.to_s}", {authenticated: 'true', app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
         it 'Returns a 200 (OK)' do
           expect(last_response.status).to be 200
@@ -549,7 +549,7 @@ RSpec.describe Controllers::Services do
         let!(:non_authenticated) { create(:route, service: bare_service, authenticated: false) }
 
         before do
-          put "/#{bare_service.id.to_s}/routes/#{non_authenticated.id.to_s}", {authenticated: 1, app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put "/services/#{bare_service.id.to_s}/routes/#{non_authenticated.id.to_s}", {authenticated: 1, app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
         it 'Returns a 200 (OK)' do
           expect(last_response.status).to be 200
@@ -565,7 +565,7 @@ RSpec.describe Controllers::Services do
         let!(:authenticated) { create(:route, service: bare_service, authenticated: true) }
 
         before do
-          put "/#{bare_service.id.to_s}/routes/#{authenticated.id.to_s}", {authenticated: false, app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put "/services/#{bare_service.id.to_s}/routes/#{authenticated.id.to_s}", {authenticated: false, app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
         it 'Returns a 200 (OK)' do
           expect(last_response.status).to be 200
@@ -582,7 +582,7 @@ RSpec.describe Controllers::Services do
     describe 'Not Found' do
       describe 'Service not found' do
         before do
-          put '/unknown/routes/instance_id', {app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put '/services/unknown/routes/instance_id', {app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
 
         it 'Returns a Not Found (404)' do
@@ -600,7 +600,7 @@ RSpec.describe Controllers::Services do
         let!(:another_service) { create(:bare_service, key: 'not_found') }
 
         before do
-          put "/#{another_service.id.to_s}/routes/route_id", {app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put "/services/#{another_service.id.to_s}/routes/route_id", {app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
 
         it 'Returns a Not Found (404)' do
@@ -627,7 +627,7 @@ RSpec.describe Controllers::Services do
 
     describe 'Nominal case' do
       before do
-        post '/actions', {app_key: 'test_key', token: 'test_token', session_id: session.token, instances: instances, action: 'restart'}
+        post '/services/actions', {app_key: 'test_key', token: 'test_token', session_id: session.token, instances: instances, action: 'restart'}
       end
       it 'Returns a OK (200) status code' do
         expect(last_response.status).to be 201
@@ -679,7 +679,7 @@ RSpec.describe Controllers::Services do
     describe '400 errors' do
       describe 'action not given' do
         before do
-          post '/actions', {app_key: 'test_key', token: 'test_token', session_id: session.token, instances: {}}
+          post '/services/actions', {app_key: 'test_key', token: 'test_token', session_id: session.token, instances: {}}
         end
         it 'Returns a Bad Request (400) status' do
           expect(last_response.status).to be 400
@@ -694,7 +694,7 @@ RSpec.describe Controllers::Services do
       end
       describe 'action empty' do
         before do
-          post '/actions', {app_key: 'test_key', token: 'test_token', session_id: session.token, instances: instances, action: ''}
+          post '/services/actions', {app_key: 'test_key', token: 'test_token', session_id: session.token, instances: instances, action: ''}
         end
         it 'Returns a Bad Request (400) status' do
           expect(last_response.status).to be 400
@@ -709,7 +709,7 @@ RSpec.describe Controllers::Services do
       end
       describe 'action unknown' do
         before do
-          post '/actions', {app_key: 'test_key', token: 'test_token', session_id: session.token, instances: instances, action: 'anything'}
+          post '/services/actions', {app_key: 'test_key', token: 'test_token', session_id: session.token, instances: instances, action: 'anything'}
         end
         it 'Returns a Bad Request (400) status' do
           expect(last_response.status).to be 400
@@ -724,7 +724,7 @@ RSpec.describe Controllers::Services do
       end
       describe 'invalid instances' do
         before do
-          post '/actions', {app_key: 'test_key', token: 'test_token', session_id: session.token, instances: 'any string', action: 'restart'}
+          post '/services/actions', {app_key: 'test_key', token: 'test_token', session_id: session.token, instances: 'any string', action: 'restart'}
         end
         it 'Returns a Bad Request (400) status' do
           expect(last_response.status).to be 400
@@ -743,7 +743,7 @@ RSpec.describe Controllers::Services do
       describe 'when a service ID does not exist' do
         before do
           instances = {'anything' => [first_instance.id.to_s, second_instance.id.to_s]}
-          post '/actions', {app_key: 'test_key', token: 'test_token', session_id: session.token, instances: instances, action: 'restart'}
+          post '/services/actions', {app_key: 'test_key', token: 'test_token', session_id: session.token, instances: instances, action: 'restart'}
         end
         it 'Returns a Not Found (404) status code' do
           expect(last_response.status).to be 404
@@ -759,7 +759,7 @@ RSpec.describe Controllers::Services do
       describe 'when an instance ID does not exist' do
         before do
           instances = {service.id.to_s => ['anything', second_instance.id.to_s]}
-          post '/actions', {app_key: 'test_key', token: 'test_token', session_id: session.token, instances: instances, action: 'restart'}
+          post '/services/actions', {app_key: 'test_key', token: 'test_token', session_id: session.token, instances: instances, action: 'restart'}
         end
         it 'Returns a Not Found (404) status code' do
           expect(last_response.status).to be 404

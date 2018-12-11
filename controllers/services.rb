@@ -9,11 +9,11 @@ module Controllers
       @session = check_session('service')
     end
 
-    before '/:id/?*' do
+    before '/services/:id/?*' do
       @service = check_service if params['id'] != 'actions'
     end
 
-    before '/:id/instances/:instance_id/?*' do
+    before '/services/:id/instances/:instance_id/?*' do
       @instance = check_instance
     end
 
