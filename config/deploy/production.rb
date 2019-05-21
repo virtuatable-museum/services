@@ -9,7 +9,7 @@
 
 set :app_port, 9294
 
-server '51.158.110.222', user: 'deploy', roles: %w{web}
+server '51.15.215.53', user: 'deploy', roles: %w{web}
 
 # role-based syntax
 # ==================
