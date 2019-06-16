@@ -13,7 +13,7 @@ module Controllers
       @service = check_service if params['id'] != 'actions'
     end
 
-    before '/services/:id/instances/:instance_id/?*' do
+    before '/services/:id/instances/:updated_instance/?*' do
       @instance = check_instance
     end
 
@@ -47,7 +47,7 @@ module Controllers
       halt 200, {message: 'updated'}.to_json
     end
 
-    declare_route 'put', '/:id/instances/:instance_id' do
+    declare_route 'put', '/:id/instances/:updated_instance' do
       ::Services::Update.instance.update_instance(@instance, params)
       halt 200, {message: 'updated'}.to_json
     end
@@ -66,7 +66,7 @@ module Controllers
     end
 
     def check_instance
-      instance = @service.instances.where(id: params['instance_id']).first
+      instance = @service.instances.where(id: params['updated_instance']).first
       custom_error(404, "instance.instance_id.unknown") if instance.nil?
       return instance
     end
