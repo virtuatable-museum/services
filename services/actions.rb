@@ -57,14 +57,17 @@ module Services
     def restart(managedInstance)
       case managedInstance.type
       when :heroku
-        if heroku.nil?
-          return false
+        begin
+          if heroku.nil?
+            return false
+          end
+          if Arkaan::Utils::MicroService.instance.instance.id.to_s == managedInstance.id.to_s
+            return false
+          end
+          heroku.dyno.restart(managedInstance.data[:name], 'web')
+        rescue StandardError
+          false
         end
-        if Arkaan::Utils::MicroService.instance.instance.id.to_s == managedInstance.id.to_s
-          return false
-        end
-        action = heroku.dyno.restart(managedInstance.data[:name], 'web')
-        return action
       end
     end
   end

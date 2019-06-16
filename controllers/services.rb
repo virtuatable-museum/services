@@ -19,8 +19,6 @@ module Controllers
 
     declare_route 'post', '/actions' do
       check_presence 'action', 'instances', route: 'actions'
-
-      require 'pry'; binding.pry
       
       if !params['instances'].is_a? Hash
         custom_error 400, 'actions.instances.format'
