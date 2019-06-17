@@ -16,22 +16,6 @@ module Controllers
     before '/services/:id/instances/:updated_instance/?*' do
       @instance = check_instance
     end
-
-    declare_route 'post', '/actions' do
-      check_presence 'action', 'instances', route: 'actions'
-      
-      if !params['instances'].is_a? Hash
-        custom_error 400, 'actions.instances.format'
-      end
-      if !::Services::Actions.instance.check_instances(params['instances'])
-        custom_error 404, 'actions.instances.unknown'
-      end
-      if !::Services::Actions::instance.check_action(params['action'])
-        custom_error 400, 'actions.action.unknown'
-      end
-      results = ::Services::Actions.instance.multi(params['action'], params['instances'], @session)
-      halt 201, {message: 'created', items: results}.to_json
-    end
     
     declare_route 'get', '/' do
       services = Decorators::Service.decorate_collection(Arkaan::Monitoring::Service.all)
