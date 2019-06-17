@@ -16,6 +16,10 @@ module Controllers
     before '/services/:id/instances/:updated_instance/?*' do
       @instance = check_instance
     end
+
+    before '/services/:id/routes/:route_id/?*' do
+      @route = check_route
+    end
     
     declare_route 'get', '/' do
       services = Decorators::Service.decorate_collection(Arkaan::Monitoring::Service.all)
@@ -37,9 +41,7 @@ module Controllers
     end
 
     declare_route 'put', '/:id/routes/:route_id' do
-      route = @service.routes.where(id: params['route_id']).first
-      custom_error(404, "route.route_id.unknown") if route.nil?
-      ::Services::Update.instance.update_route(route, params)
+      ::Services::Update.instance.update_route(@route, params)
       halt 200, {message: 'updated'}.to_json
     end
 
@@ -48,16 +50,27 @@ module Controllers
       halt 200, {message: 'deleted'}.to_json
     end
 
+    declare_route 'delete', '/:id/routes/:route_id' do
+      @route.delete
+      halt 200, {message: 'deleted'}.to_json
+    end
+
     def check_service
       service = Arkaan::Monitoring::Service.where(id: params['id']).first
       custom_error(404, "service.service_id.unknown") if service.nil?
-      return service
+      service
+    end
+
+    def check_route
+      route = @service.routes.where(id: params['route_id']).first
+      custom_error(404, "route.route_id.unknown") if route.nil?
+      route
     end
 
     def check_instance
       instance = @service.instances.where(id: params['updated_instance']).first
       custom_error(404, "instance.instance_id.unknown") if instance.nil?
-      return instance
+      instance
     end
   end
 end

@@ -679,4 +679,65 @@ RSpec.describe Controllers::Services do
 
     it_should_behave_like 'a route', 'delete', '/service_id/instances/instance_id'
   end
+
+  describe 'DELETE /:id/routes/:route_id' do
+
+    describe 'Nominal case' do
+      let!(:bare_service) { create(:bare_service, key: 'routes') }
+      let!(:route) { create(:route, service: bare_service, active: true) }
+
+      before do
+        delete "/services/#{bare_service.id}/routes/#{route.id}", {app_key: 'test_key', token: 'test_token', session_id: session.token}
+      end
+      it 'Returns a OK (200) status code' do
+        expect(last_response.status).to be 200
+      end
+      it 'Returns the correct body' do
+        expect(last_response.body).to include_json({message: 'deleted'})
+      end
+      it 'Has correctly deleted the route from the service' do
+        bare_service.reload
+        expect(bare_service.routes.count).to be 0
+      end
+    end
+
+    describe 'Not Found' do
+      describe 'Service not found' do
+        before do
+          delete '/services/unknown/instances/route_id', {app_key: 'test_key', token: 'test_token', session_id: session.token}
+        end
+
+        it 'Returns a Not Found (404)' do
+          expect(last_response.status).to be 404
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({
+            status: 404,
+            field: 'service_id',
+            error: 'unknown'
+          })
+        end
+      end
+      describe 'Route not found' do
+        let!(:another_service) { create(:bare_service, key: 'not_found') }
+
+        before do
+          delete "/services/#{another_service.id.to_s}/routes/route_id", {app_key: 'test_key', token: 'test_token', session_id: session.token}
+        end
+
+        it 'Returns a Not Found (404)' do
+          expect(last_response.status).to be 404
+        end
+        it 'Returns the correct body' do
+          expect(last_response.body).to include_json({
+            status: 404,
+            field: 'route_id',
+            error: 'unknown'
+          })
+        end
+      end
+    end
+
+    it_should_behave_like 'a route', 'delete', '/service_id/routes/route_id'
+  end
 end
