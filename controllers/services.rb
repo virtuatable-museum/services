@@ -59,6 +59,11 @@ module Controllers
       halt 200, {message: 'updated'}.to_json
     end
 
+    declare_route 'delete', '/:id/instances/:updated_instance' do
+      @instance.delete
+      halt 200, {message: 'deleted'}.to_json
+    end
+
     def check_service
       service = Arkaan::Monitoring::Service.where(id: params['id']).first
       custom_error(404, "service.service_id.unknown") if service.nil?
