@@ -6,10 +6,12 @@ module Controllers
     load_errors_from __FILE__
 
     before do
+      pass if route_is_diagnostic?
       @session = check_session('service')
     end
 
     before '/services/:id/?*' do
+      pass if route_is_diagnostic?
       @service = check_service if params['id'] != 'actions'
     end
 
