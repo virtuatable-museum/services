@@ -1,7 +1,7 @@
 module Controllers
   # Controller for the rights, mapped on /rights
   # @author Vincent Courtois <courtois.vincent@outlook.com>
-  class Services < Arkaan::Utils::Controller
+  class Services < Arkaan::Utils::Controllers::Checked
 
     load_errors_from __FILE__
 
@@ -20,6 +20,8 @@ module Controllers
     before '/services/:id/routes/:route_id/?*' do
       @route = check_route
     end
+
+    declare_status_route
     
     declare_route 'get', '/' do
       services = Decorators::Service.decorate_collection(Arkaan::Monitoring::Service.all)
