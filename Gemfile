@@ -18,14 +18,16 @@ group :developement, :production do
 end
 
 group :development, :test do
-  gem 'pry'             , '0.11.1'
-  gem 'rack-test'       , '0.7.0' , require: 'rack/test'
-  gem 'rspec'           , '3.6.0'
-  gem 'rspec-mocks'     , '3.6.0'
-  gem 'factory_girl'    , '4.8.1'
-  gem 'simplecov'       , '0.15.1'
-  gem 'database_cleaner', '1.6.1'
-  gem 'bcrypt'          , '3.1.11'
-  gem 'rubocop'
-  gem 'rspec-json_expectations'
+  gem 'pry'                    , '0.11.1'
+  gem 'rack-test'              , '0.7.0' , require: 'rack/test'
+  gem 'rspec'                  , '3.6.0'
+  gem 'rspec-mocks'            , '3.6.0'
+  gem 'factory_girl'           , '4.8.1'
+  gem 'simplecov'              , '0.15.1'
+  gem 'database_cleaner'       , '1.6.1'
+  gem 'bcrypt'                 , '3.1.11'
+  gem 'rubocop'                , '0.74'
+  gem 'rspec-json_expectations', '2.1.0'
+  gem 'yard'                   , '0.9.20'
+  gem 'rspec_junit_formatter'  , '0.4.1'
 end
