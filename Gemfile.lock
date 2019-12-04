@@ -1,21 +1,3 @@
-PATH
-  remote: ../virtuatable
-  specs:
-    virtuatable (0.4.0)
-      actionview (= 5.2.3)
-      activemodel (= 5.2.3)
-      activesupport (= 5.2.3)
-      arkaan (= 1.9.0)
-      bcrypt (= 3.1.11)
-      dotenv (= 2.7.2)
-      draper (= 3.1.0)
-      faraday (= 0.15.2)
-      mongoid (= 7.0.1)
-      platform-api (= 2.1.0)
-      require_all (= 3.0.0)
-      sinatra (= 2.0.5)
-      sinatra-contrib (= 2.0.5)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -194,6 +176,20 @@ GEM
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
     unicode-display_width (1.6.0)
+    virtuatable (0.4.0)
+      actionview (= 5.2.3)
+      activemodel (= 5.2.3)
+      activesupport (= 5.2.3)
+      arkaan (= 1.9.0)
+      bcrypt (= 3.1.11)
+      dotenv (= 2.7.2)
+      draper (= 3.1.0)
+      faraday (= 0.15.2)
+      mongoid (= 7.0.1)
+      platform-api (= 2.1.0)
+      require_all (= 3.0.0)
+      sinatra (= 2.0.5)
+      sinatra-contrib (= 2.0.5)
     yard (0.9.20)
 
 PLATFORMS
@@ -222,7 +218,7 @@ DEPENDENCIES
   rubocop (= 0.74)
   simplecov (= 0.15.1)
   sinatra (= 2.0.5)
-  virtuatable!
+  virtuatable (= 0.4.0)
   yard (= 0.9.20)
 
 BUNDLED WITH
