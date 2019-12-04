@@ -3,8 +3,10 @@ source 'https://rubygems.org'
 group :development, :production, :test do
   gem 'sinatra'     , '2.0.5' , require: 'sinatra/base'
   gem 'mongoid'     , '7.0.1'
-  gem 'arkaan'      , '1.6.1'
+  gem 'arkaan'      , '1.9.0'
+  gem 'virtuatable' , path: '../virtuatable'
   gem 'draper'      , '3.1.0'
+  gem 'require_all' , '3.0.0'
   gem 'platform-api'
   
   gem 'capistrano'        , '3.11.0'
@@ -27,7 +29,7 @@ group :development, :test do
   gem 'database_cleaner'       , '1.6.1'
   gem 'bcrypt'                 , '3.1.11'
   gem 'rubocop'                , '0.74'
-  gem 'rspec-json_expectations', '2.1.0'
+  gem 'rspec-json_expectations', '2.1.0', require: 'rspec/json_expectations'
   gem 'yard'                   , '0.9.20'
   gem 'rspec_junit_formatter'  , '0.4.1'
 end

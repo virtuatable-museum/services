@@ -256,7 +256,7 @@ RSpec.describe Controllers::Services do
       end
     end
 
-    it_should_behave_like 'a route', 'put', '/:id'
+    it_should_behave_like 'a route', 'put', '/services/service_id'
   end
 
   describe 'PUT /:id/instances/:instance_id' do
@@ -367,7 +367,7 @@ RSpec.describe Controllers::Services do
       end
     end
 
-    it_should_behave_like 'a route', 'put', '/service_id/instances/instance_id'
+    it_should_behave_like 'a route', 'put', '/services/service_id/instances/instance_id'
   end
 
   describe 'PUT /:id/routes/:route_id' do
@@ -616,7 +616,7 @@ RSpec.describe Controllers::Services do
       end
     end
 
-    it_should_behave_like 'a route', 'put', '/service_id/route/route_id'
+    it_should_behave_like 'a route', 'put', '/services/service_id/routes/route_id'
   end
 
   describe 'DELETE /:id/instances/:instance_id' do
@@ -677,7 +677,7 @@ RSpec.describe Controllers::Services do
       end
     end
 
-    it_should_behave_like 'a route', 'delete', '/service_id/instances/instance_id'
+    it_should_behave_like 'a route', 'delete', '/services/service_id/instances/instance_id'
   end
 
   describe 'DELETE /:id/routes/:route_id' do
@@ -738,6 +738,6 @@ RSpec.describe Controllers::Services do
       end
     end
 
-    it_should_behave_like 'a route', 'delete', '/service_id/routes/route_id'
+    it_should_behave_like 'a route', 'delete', '/services/service_id/routes/route_id'
   end
 end
