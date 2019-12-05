@@ -46,7 +46,7 @@ RSpec.describe Controllers::Services do
       end
     end
 
-    it_should_behave_like 'a route', 'get', '/services'
+    it_should_behave_like 'a route', 'get', '/services', {authenticated: true}
   end
 
   describe 'GET /:id' do
@@ -98,7 +98,7 @@ RSpec.describe Controllers::Services do
       end
     end
 
-    it_should_behave_like 'a route', 'get', '/services/service_id'
+    it_should_behave_like 'a route', 'get', '/services/service_id', {authenticated: true}
   end
 
   describe 'PUT /:id' do
@@ -256,7 +256,7 @@ RSpec.describe Controllers::Services do
       end
     end
 
-    it_should_behave_like 'a route', 'put', '/services/service_id'
+    it_should_behave_like 'a route', 'put', '/services/service_id', {authenticated: true}
   end
 
   describe 'PUT /:id/instances/:instance_id' do
@@ -367,7 +367,7 @@ RSpec.describe Controllers::Services do
       end
     end
 
-    it_should_behave_like 'a route', 'put', '/services/service_id/instances/instance_id'
+    it_should_behave_like 'a route', 'put', '/services/service_id/instances/instance_id', {authenticated: true}
   end
 
   describe 'PUT /:id/routes/:route_id' do
@@ -533,7 +533,7 @@ RSpec.describe Controllers::Services do
         let!(:non_authenticated) { create(:route, service: bare_service, authenticated: false) }
 
         before do
-          put "/services/#{bare_service.id.to_s}/routes/#{non_authenticated.id.to_s}", {authenticated: 'true', app_key: 'test_key', token: 'test_token', session_id: session.token}
+          put "/services/#{bare_service.id.to_s}/routes/#{non_authenticated.id.to_s}", {authenticated: true, app_key: 'test_key', token: 'test_token', session_id: session.token}
         end
         it 'Returns a 200 (OK)' do
           expect(last_response.status).to be 200
@@ -616,7 +616,7 @@ RSpec.describe Controllers::Services do
       end
     end
 
-    it_should_behave_like 'a route', 'put', '/services/service_id/routes/route_id'
+    it_should_behave_like 'a route', 'put', '/services/service_id/routes/route_id', {authenticated: true}
   end
 
   describe 'DELETE /:id/instances/:instance_id' do
@@ -677,7 +677,7 @@ RSpec.describe Controllers::Services do
       end
     end
 
-    it_should_behave_like 'a route', 'delete', '/services/service_id/instances/instance_id'
+    it_should_behave_like 'a route', 'delete', '/services/service_id/instances/instance_id', {authenticated: true}
   end
 
   describe 'DELETE /:id/routes/:route_id' do
@@ -738,6 +738,6 @@ RSpec.describe Controllers::Services do
       end
     end
 
-    it_should_behave_like 'a route', 'delete', '/services/service_id/routes/route_id'
+    it_should_behave_like 'a route', 'delete', '/services/service_id/routes/route_id', {authenticated: true}
   end
 end
