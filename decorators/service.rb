@@ -3,8 +3,8 @@
 module Decorators
   # Decorator for a service, transforming it in hash.
   # @author Vincent Courtois <courtois.vincent@outlook.com>
-  class Service < Draper::Decorator
-    delegate_all
+  class Service < Virtuatable::Enhancers::Base
+    enhances Arkaan::Monitoring::Service
 
     def to_h
       {
@@ -20,15 +20,11 @@ module Decorators
     private
 
     def routes
-      decorate_list(:routes, Decorators::Route)
+      object.routes.map(&:enhance!).map(&:to_h)
     end
 
     def instances
-      decorate_list(:instances, Decorators::Instance)
-    end
-
-    def decorate_list(name, klass)
-      object.send(name).map { |route| klass.new(route).to_h }
+      object.instances.map(&:enhance!).map(&:to_h)
     end
   end
 end

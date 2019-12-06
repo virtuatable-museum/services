@@ -3,8 +3,8 @@
 module Decorators
   # Decorator for an instance, transforming it in hash.
   # @author Vincent Courtois <courtois.vincent@outlook.com>
-  class Instance < Draper::Decorator
-    delegate_all
+  class Instance < Virtuatable::Enhancers::Base
+    enhances Arkaan::Monitoring::Instance
 
     def to_h
       {

@@ -3,8 +3,8 @@
 module Decorators
   # Decorator for a route, transforming it in hash.
   # @author Vincent Courtois <courtois.vincent@outlook.com>
-  class Route < Draper::Decorator
-    delegate_all
+  class Route < Virtuatable::Enhancers::Base
+    enhances Arkaan::Monitoring::Route
 
     def to_h
       {

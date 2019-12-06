@@ -5,11 +5,11 @@ module Controllers
   # @author Vincent Courtois <courtois.vincent@outlook.com>
   class Services < Virtuatable::Controllers::Base
     api_route 'get', '/' do
-      api_list Decorators::Service.decorate_collection(all_services)
+      api_list all_services.map(&:enhance!)
     end
 
     api_route 'get', '/:id' do
-      api_item Decorators::Service.new(service!)
+      api_item service!.enhance!
     end
 
     api_route 'put', '/:id' do
